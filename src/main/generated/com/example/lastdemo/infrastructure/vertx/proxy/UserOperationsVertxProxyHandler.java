@@ -35,11 +35,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import io.vertx.serviceproxy.ServiceBinder;
 import io.vertx.serviceproxy.ProxyHandler;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.serviceproxy.HelperUtils;
+import io.vertx.serviceproxy.ServiceBinder;
 
 import com.example.lastdemo.infrastructure.web.model.response.UserResponse;
 import io.vertx.core.AsyncResult;
@@ -59,6 +59,7 @@ public class UserOperationsVertxProxyHandler extends ProxyHandler {
   private final long timerID;
   private long lastAccessed;
   private final long timeoutSeconds;
+  private final boolean includeDebugInfo;
 
   public UserOperationsVertxProxyHandler(Vertx vertx, UserOperations service){
     this(vertx, service, DEFAULT_CONNECTION_TIMEOUT);
@@ -68,9 +69,14 @@ public class UserOperationsVertxProxyHandler extends ProxyHandler {
     this(vertx, service, true, timeoutInSecond);
   }
 
-  public UserOperationsVertxProxyHandler(Vertx vertx, UserOperations service, boolean topLevel, long timeoutSeconds) {
+  public UserOperationsVertxProxyHandler(Vertx vertx, UserOperations service, boolean topLevel, long timeoutInSecond){
+    this(vertx, service, true, timeoutInSecond, false);
+  }
+
+  public UserOperationsVertxProxyHandler(Vertx vertx, UserOperations service, boolean topLevel, long timeoutSeconds, boolean includeDebugInfo) {
       this.vertx = vertx;
       this.service = service;
+      this.includeDebugInfo = includeDebugInfo;
       this.timeoutSeconds = timeoutSeconds;
       try {
         this.vertx.eventBus().registerDefaultCodec(ServiceException.class,
@@ -116,16 +122,12 @@ public class UserOperationsVertxProxyHandler extends ProxyHandler {
       accessed();
       switch (action) {
         case "create": {
-          service.create(json.getJsonObject("newUserRequest") == null ? null : new com.example.lastdemo.infrastructure.web.model.request.NewUserRequest(json.getJsonObject("newUserRequest")),
+          service.create(json.getJsonObject("newUserRequest") != null ? new com.example.lastdemo.infrastructure.web.model.request.NewUserRequest((JsonObject)json.getJsonObject("newUserRequest")) : null,
                         res -> {
                         if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
+                          HelperUtils.manageFailure(msg, res.cause(), includeDebugInfo);
                         } else {
-                          msg.reply(res.result() == null ? null : res.result().toJson());
+                          msg.reply(res.result() != null ? res.result().toJson() : null);
                         }
                      });
           break;
@@ -133,7 +135,8 @@ public class UserOperationsVertxProxyHandler extends ProxyHandler {
         default: throw new IllegalStateException("Invalid action: " + action);
       }
     } catch (Throwable t) {
-      msg.reply(new ServiceException(500, t.getMessage()));
+      if (includeDebugInfo) msg.reply(new ServiceException(500, t.getMessage(), HelperUtils.generateDebugInfo(t)));
+      else msg.reply(new ServiceException(500, t.getMessage()));
       throw t;
     }
   }

@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.function.Function;
-import io.vertx.serviceproxy.ServiceProxyBuilder;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.serviceproxy.ProxyUtils;
@@ -57,27 +56,28 @@ public class UserOperationsVertxEBProxy implements UserOperations {
     this._vertx = vertx;
     this._address = address;
     this._options = options;
-    try{
+    try {
       this._vertx.eventBus().registerDefaultCodec(ServiceException.class, new ServiceExceptionMessageCodec());
-    } catch (IllegalStateException ex) {}
+    } catch (IllegalStateException ex) {
+    }
   }
 
   @Override
-  public  void create(NewUserRequest newUserRequest, Handler<AsyncResult<UserResponse>> handler){
+  public void create(NewUserRequest newUserRequest, Handler<AsyncResult<UserResponse>> handler){
     if (closed) {
       handler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
-    _json.put("newUserRequest", newUserRequest == null ? null : newUserRequest.toJson());
+    _json.put("newUserRequest", newUserRequest != null ? newUserRequest.toJson() : null);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "create");
-    _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         handler.handle(Future.failedFuture(res.cause()));
       } else {
-        handler.handle(Future.succeededFuture(res.result().body() == null ? null : new UserResponse(res.result().body())));
+        handler.handle(Future.succeededFuture(res.result().body() != null ? new com.example.lastdemo.infrastructure.web.model.response.UserResponse((JsonObject)res.result().body()) : null));
       }
     });
   }

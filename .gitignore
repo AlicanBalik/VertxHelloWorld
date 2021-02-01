@@ -164,4 +164,5 @@ nbdist/
 !.vscode/extensions.json
 *.code-workspace
 
-# End of https://www.toptal.com/developers/gitignore/api/java,intellij,java-web,vertx,netbeans,vscode,maven
+/src/main/generated
+/src/main/generated/*

@@ -1,0 +1,44 @@
+package com.example.lastdemo.infrastructure.web.route;
+
+import com.example.lastdemo.infrastructure.vertx.proxy.UserOperations;
+import com.example.lastdemo.infrastructure.web.model.request.NewUserRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.ext.web.Router;
+import io.vertx.reactivex.ext.web.RoutingContext;
+import io.vertx.reactivex.ext.web.handler.BodyHandler;
+import org.springframework.stereotype.Component;
+
+@Component
+public class UsersRoute extends AbstractHttpRoute {
+
+    private final UserOperations userOperations;
+
+    public UsersRoute(ObjectMapper objectMapper, UserOperations userOperations) {
+        super(objectMapper);
+        this.userOperations = userOperations;
+    }
+
+    @Override
+    public Router configure(Vertx vertx) {
+
+        final String usersApiPath = "/users";
+        final Router usersRouter = Router.router(vertx);
+        usersRouter.route().handler(BodyHandler.create());
+        usersRouter.post(usersApiPath).handler(this::create);
+//        usersRouter.post(usersApiPath + "/login").handler(this::login);
+        return usersRouter;
+    }
+
+//    private void login(RoutingContext routingContext) {
+//        LoginRequest loginRequest = getBody(routingContext, LoginRequest.class);
+//        userOperations.login(
+//                loginRequest, responseOrFail(routingContext, HttpResponseStatus.OK.code(), true));
+//    }
+
+    private void create(RoutingContext routingContext) {
+        NewUserRequest newUserRequest = getBody(routingContext, NewUserRequest.class);
+        userOperations.create(newUserRequest, responseOrFail(routingContext, HttpResponseStatus.CREATED.code()));
+    }
+}

@@ -1,0 +1,33 @@
+package com.example.lastdemo.infrastructure.web.model.response;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+import java.util.LinkedList;
+import java.util.List;
+
+@JsonRootName("errors")
+public final class ErrorResponse {
+
+    private List<String> body;
+
+    public ErrorResponse() {
+        this.body = new LinkedList<>();
+    }
+
+    public ErrorResponse(String error) {
+        this();
+        this.body.add(error);
+    }
+
+    public ErrorResponse(List<String> body) {
+        this.body = body;
+    }
+
+    public List<String> getBody() {
+        return body;
+    }
+
+    public void setBody(List<String> body) {
+        this.body = body;
+    }
+}

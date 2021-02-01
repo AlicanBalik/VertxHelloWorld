@@ -7,7 +7,7 @@ import io.vertx.core.json.JsonArray;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserStatementsImpl extends AbstractStatements implements UserStatements {
+public final class UserStatementsImpl extends AbstractStatements implements UserStatements {
 
     @Override
     public Statement<JsonArray> create(User user) {

@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class BusinessExceptionMapper {
+public final class BusinessExceptionMapper {
 
     private final Map<String, BusinessExceptionHandler> exceptionMapper;
     private final ObjectMapper objectMapper;

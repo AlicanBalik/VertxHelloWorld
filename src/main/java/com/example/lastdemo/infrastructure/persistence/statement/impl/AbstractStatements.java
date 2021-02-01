@@ -4,6 +4,7 @@ import io.vertx.core.json.JsonArray;
 
 import java.util.List;
 
+// Cannot be immutable due to inheritance.
 public class AbstractStatements {
 
   protected void addFieldIfPresent(

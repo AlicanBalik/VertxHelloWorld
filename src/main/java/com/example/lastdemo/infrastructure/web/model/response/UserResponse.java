@@ -7,7 +7,7 @@ import io.vertx.core.json.JsonObject;
 
 @JsonRootName("user")
 @DataObject(generateConverter = true)
-public class UserResponse {
+public final class UserResponse {
 
     private String email;
 

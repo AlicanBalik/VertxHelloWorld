@@ -2,19 +2,17 @@ package com.example.lastdemo.infrastructure.web.model.request;
 
 import com.example.lastdemo.domain.user.model.NewUser;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
-import java.io.Serializable;
-
 //@JsonRootName("user")
 @DataObject(generateConverter = true)
-public class NewUserRequest implements Serializable {
+public final class NewUserRequest {
 
     private String email;
     private String password;
 
+    // Used by objectMapper.
     public NewUserRequest(@JsonProperty("email") String email, @JsonProperty("password") String password) {
         this.email = email;
         this.password = password;
@@ -31,10 +29,7 @@ public class NewUserRequest implements Serializable {
     }
 
     public NewUser toNewUser() {
-        NewUser newUser = new NewUser();
-        newUser.setEmail(this.email);
-        newUser.setPassword(this.password);
-        return newUser;
+        return new NewUser(this.email, this.password);
     }
 
     public String getEmail() {

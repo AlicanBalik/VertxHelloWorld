@@ -10,11 +10,13 @@ import com.example.lastdemo.domain.user.service.UserService;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Single;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserServiceImpl extends ApplicationService implements UserService {
+@Service
+public final class UserServiceImpl extends ApplicationService implements UserService {
 
     private final UserRepository userRepository;
     private final ModelValidator modelValidator;
@@ -27,11 +29,9 @@ public class UserServiceImpl extends ApplicationService implements UserService {
     @Override
     public Single<User> create(NewUser newUser) {
         modelValidator.validate(newUser);
-        User user = new User();
-        user.setId(UUID.randomUUID().toString());
-        user.setEmail(newUser.getEmail());
+        User user = new User(UUID.randomUUID().toString(), newUser.getEmail(), newUser.getPassword());
+
 //        user.setPassword(hashProvider.hashPassword(newUser.getPassword()));
-        user.setPassword(newUser.getPassword());
 
         return this.validEmail(user.getEmail())
 //                .andThen(validEmail(user.getEmail()))

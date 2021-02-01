@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class ModelValidatorImpl implements ModelValidator {
+public final class ModelValidatorImpl implements ModelValidator {
 
     private final Validator validator;
 

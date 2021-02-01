@@ -11,7 +11,7 @@ import io.vertx.reactivex.ext.web.handler.BodyHandler;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UsersRoute extends AbstractHttpRoute {
+public final class UsersRoute extends AbstractHttpRoute {
 
     private final UserOperations userOperations;
 

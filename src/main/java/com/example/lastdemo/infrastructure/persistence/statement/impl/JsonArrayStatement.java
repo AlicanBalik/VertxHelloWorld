@@ -3,7 +3,7 @@ package com.example.lastdemo.infrastructure.persistence.statement.impl;
 import com.example.lastdemo.infrastructure.persistence.statement.Statement;
 import io.vertx.core.json.JsonArray;
 
-public class JsonArrayStatement implements Statement<JsonArray> {
+public final class JsonArrayStatement implements Statement<JsonArray> {
 
     private final String sql;
     private final JsonArray params;

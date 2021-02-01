@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+// Cannot be immutable due to inheritance.
 public class BusinessException extends RuntimeException {
 
     private List<String> messages;

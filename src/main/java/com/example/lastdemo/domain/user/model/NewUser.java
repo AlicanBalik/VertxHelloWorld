@@ -5,28 +5,26 @@ import com.example.lastdemo.application.constants.ValidationMessages;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-public class NewUser {
+public final class NewUser {
 
-    @Email
+    @Email(message = "Invalid email format.")
     @NotBlank(message = ValidationMessages.EMAIL_MUST_BE_NOT_BLANK)
-    private String email;
+    private final String email;
 
     @NotBlank(message = ValidationMessages.PASSWORD_MUST_BE_NOT_BLANK)
-    private String password;
+    private final String password;
+
+    public NewUser(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

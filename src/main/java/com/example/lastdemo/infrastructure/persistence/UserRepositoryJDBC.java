@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
+// Cannot be immutable due to bean initialisation of UserRepository.
 public class UserRepositoryJDBC extends JDBCRepository implements UserRepository {
 
     private final JDBCClient jdbcClient;
